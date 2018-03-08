@@ -208,12 +208,6 @@ int  send_file(TT server_msg  ,const int &conn_fd ){   //flag==1
     close(file_fd);
 }
 
-
-
-
-
-
-
 int sure(TT server_msg,int conn_fd){
     //1.判断文件是否存在 ？
     char path[MAXSIZE] ="./file" ;

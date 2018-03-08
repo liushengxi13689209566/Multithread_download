@@ -32,7 +32,7 @@ TT Myclient::downloadFile(){
     cin >> client_msg.filename ;
     tag:cout << "请 输  入 线 程 下 载 数 量  " ;
     cin >> client_msg.threadCount  ;
-    if(client_msg.threadCount  < 1 )
+    if(client_msg.threadCount  < 1  ||  client_msg.threadCount > 1000 )
         goto tag ;
 
     condTag.set();
@@ -166,7 +166,7 @@ void *my_recv(void* args)  //静态成员具有类的数据成员 conn_fd
             for(int i = 0 ;i < massage.threadCount ;i++ ){  //4 
                 memset(name,0,sizeof(name));
                 sprintf(name,"./%d.txt",i+1 ); 
-                file_fd = open(name,O_TRUNC | O_CREAT |O_APPEND | O_WRONLY,S_IRUSR | S_IWUSR); 
+                file_fd = open(name,O_TRUNC | O_CREAT | O_APPEND | O_WRONLY,S_IRUSR | S_IWUSR); 
                 //所有者可写入,可读取 O_TRUNC:如果文件存在，且以可写的方式打开时，将文件清零
                 if(file_fd < 0 )
                 {
