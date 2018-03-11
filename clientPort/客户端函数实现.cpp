@@ -15,6 +15,7 @@ Myclient::Myclient(const char *ip ,const int port ){
 
     conn_fd = socket( AF_INET, SOCK_STREAM, 0 );
     assert( conn_fd >= 0 );
+
     if ( connect( conn_fd, ( struct sockaddr* )&server_address, sizeof( server_address ) ) < 0 )
     {
         printf( "connection failed\n" );
@@ -98,21 +99,20 @@ void *realdownloadFile(void *arg){   //线程下载文件
     TT massage ;
     int re ;
     while(1){
-        printf("-------------------------------------------recv \n");
+        printf("------------------------------------------- \n");
         re = recv(CONNFD,&massage ,sizeof(TT ),0);
-        if(re == 0) {
+        printf("re  ==== %d\n",re);
+        if( re <= 0 ) {
+            printf("********************************************* \n");
+            delete static_cast<TT *>(arg) ;
             break ;
-        } else if(re< 0){
-            cout << "error in my_recv function "<< endl ;
-            exit(0);
         }
-        else if( massage.flag == 1 ){
+        else if( re > 0 && massage.flag == 1 ){
             if( write(filefds[massage.temp+1],massage.str,massage.BiteCount) < 0) 
                 myerror("write file failed ",__LINE__ );
         }
     }
-    delete static_cast<TT *>(arg) ;
-    pthread_exit(NULL);
+    pthread_exit(NULL); 
 }
 
 int Myclient::Mergefiles(TT client_msg){  //合并文件
@@ -130,8 +130,6 @@ int Myclient::Mergefiles(TT client_msg){  //合并文件
     printf("<< -------------下 载 成 功 ，文件名为 download \n\n\n");
     return 0;
 }
-
-
 void *my_recv(void* args)  //静态成员具有类的数据成员 conn_fd 
 {
     //只用来接收信息的子线程
@@ -144,7 +142,7 @@ void *my_recv(void* args)  //静态成员具有类的数据成员 conn_fd
         if(re == 0) {
             puts("服务器开始维护,你已断开连接!");
             exit(0);
-        } else if(re< 0){
+        } else if(re < 0){
             cout << "error in my_recv function "<< endl ;
             exit(0);
         }

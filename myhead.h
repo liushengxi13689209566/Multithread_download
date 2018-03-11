@@ -77,6 +77,7 @@ void  *worker(void  *arg) ; //线程函数
 void reset_oneshot( int epollfd, int fd ) ; //worker 里面所使用的函数
 int sure(TT server_msg,const int conn_fd);
 int send_file(TT server_msg ,const int &conn_fd); 
+static int file_end = 0 ;
 
 
 
@@ -128,13 +129,10 @@ public:
 		struct timeval now ;
 		struct timespec outtime ;
         pthread_mutex_lock( &m_mutex );
-        // ret = pthread_cond_wait( &m_cond, &m_mutex );
 		gettimeofday(&now, NULL);
 		outtime.tv_sec = now.tv_sec + 1 ;
-		//outtime.tv_nsec = now.tv_usec * 1000;
 		ret = pthread_cond_timedwait(&m_cond, &m_mutex, &outtime) ;
         pthread_mutex_unlock( &m_mutex );    
-
         if(ret == ETIMEDOUT )
             return false ;
         else  {      
@@ -145,7 +143,6 @@ public:
     {
         return pthread_cond_signal( &m_cond ) == 0;
     }
-
 private:
     pthread_mutex_t m_mutex;
     pthread_cond_t m_cond;

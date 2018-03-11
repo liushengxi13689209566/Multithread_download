@@ -73,7 +73,7 @@ Myserver::Myserver(){
                 printf("\t\t accept a connection from %s\n",inet_ntoa(client_address.sin_addr));
                 addfd( epollfd, connfd, true );
             }
-            else if ( events[i].events & EPOLLIN )
+            else if ( events[i].events & EPOLLIN ) // LT不是一次读完的那种，ET 是一次读完
             {
                 pthread_t thread;
                 fds fds_for_new_worker;
@@ -113,7 +113,7 @@ void* worker( void* arg ) //线程函数
             if( errno == EAGAIN )
             {
                 reset_oneshot( epollfd, sockfd );
-                // printf( "read later\n" );
+                //printf( "read later\n" );
                 break;
             }
         }
@@ -135,14 +135,9 @@ void* worker( void* arg ) //线程函数
     }
     // printf( "end thread receiving data on fd: %d\n", sockfd );
 }
-
-
-
-
 int  send_file(TT server_msg  ,const int &conn_fd ){   //flag==1 
 
     //print(server_msg);
-
     char name[512];
     memset(name,0,sizeof(name));
     sprintf(name,"./file/%s",server_msg.filename);
@@ -187,27 +182,32 @@ int  send_file(TT server_msg  ,const int &conn_fd ){   //flag==1
 
         send(conn_fd,&server_msg,sizeof(TT),0) ;
     }
-
+    file_end = file_end - server_msg.size  ;
+    if(file_end == 0 ){ 
+        cout << "file_end == " << file_end << endl ;
+        close(conn_fd);
+        return 0;
+    }
     if( server_msg.temp  ==  server_msg.threadCount-1 ) {  //最后一个线程
-        int ll = read(file_fd,read_buf,server_msg.size) ; 
-        //剩余的字节数大于每一段的大小就会有 bug ,暂时先胡略
-        if( ll != 0 ){  //说明还有剩余
+    int ll = read(file_fd,read_buf,server_msg.size) ; 
+    //剩余的字节数大于每一段的大小就会有 bug ,暂时先胡略
+    if( ll != 0 ){  //说明还有剩余
+        memset(server_msg.str,0,sizeof(server_msg.str));
+        memcpy(server_msg.str,read_buf,ll);    //把文件内容拷贝到client.msg.str
+        server_msg.BiteCount = ll ;
+        server_msg.flag = 1 ;
 
-            memset(server_msg.str,0,sizeof(server_msg.str));
-
-
-            memcpy(server_msg.str,read_buf,ll);    //把文件内容拷贝到client.msg.str
-
-            
-            server_msg.BiteCount = ll ;
-            server_msg.flag = 1 ;
-
-            send(conn_fd,&server_msg,sizeof(TT),0) ;
+        send(conn_fd,&server_msg,sizeof(TT),0) ;
+        file_end = file_end -  ll ;
+        if(file_end == 0 ){
+            cout << "file_end == " << file_end << endl ;
+            close(conn_fd);
+            return 0;
+            }
         }
     }
     close(file_fd);
 }
-
 int sure(TT server_msg,int conn_fd){
     //1.判断文件是否存在 ？
     char path[MAXSIZE] ="./file" ;
@@ -230,6 +230,9 @@ int sure(TT server_msg,int conn_fd){
             }
             int file_sum_len = lseek(file_fd,0L,SEEK_END);    
             cout << "file_sum_len == " << file_sum_len << endl ;
+
+            file_end = file_sum_len ; //总共多大的文件
+
             server_msg.temp = file_sum_len / server_msg.threadCount ;
             close(file_fd);
             strcpy(server_msg.str," 下 载 中，请 稍 侯 ------------->> \n"); 
