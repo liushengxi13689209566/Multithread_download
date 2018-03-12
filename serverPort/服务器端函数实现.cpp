@@ -119,7 +119,6 @@ void* worker( void* arg ) //线程函数
         }
         else
         {
-            printf("********************************************flag  ==  %d\n",server_msg.flag);
             switch(server_msg.flag)
             {
                 case 0: sure(server_msg,sockfd);   break ;      
@@ -133,7 +132,6 @@ void* worker( void* arg ) //线程函数
 
         }
     }
-    // printf( "end thread receiving data on fd: %d\n", sockfd );
 }
 int  send_file(TT server_msg  ,const int &conn_fd ){   //flag==1 
 
@@ -184,7 +182,6 @@ int  send_file(TT server_msg  ,const int &conn_fd ){   //flag==1
     }
     file_end = file_end - server_msg.size  ;
     if(file_end == 0 ){ 
-        cout << "file_end == " << file_end << endl ;
         close(conn_fd);
         return 0;
     }
@@ -200,7 +197,6 @@ int  send_file(TT server_msg  ,const int &conn_fd ){   //flag==1
         send(conn_fd,&server_msg,sizeof(TT),0) ;
         file_end = file_end -  ll ;
         if(file_end == 0 ){
-            cout << "file_end == " << file_end << endl ;
             close(conn_fd);
             return 0;
             }
@@ -229,7 +225,6 @@ int sure(TT server_msg,int conn_fd){
                 myerror("create file failed ",__LINE__ );
             }
             int file_sum_len = lseek(file_fd,0L,SEEK_END);    
-            cout << "file_sum_len == " << file_sum_len << endl ;
 
             file_end = file_sum_len ; //总共多大的文件
 

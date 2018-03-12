@@ -99,11 +99,8 @@ void *realdownloadFile(void *arg){   //线程下载文件
     TT massage ;
     int re ;
     while(1){
-        printf("------------------------------------------- \n");
-        re = recv(CONNFD,&massage ,sizeof(TT ),0);
-        printf("re  ==== %d\n",re);
+        re = recv(CONNFD,&massage ,sizeof(TT ),0); //re = 0 ,服务器端连接关闭
         if( re <= 0 ) {
-            printf("********************************************* \n");
             delete static_cast<TT *>(arg) ;
             break ;
         }
