@@ -14,7 +14,9 @@
     1.条 件 变 量 与 互 斥 锁
     2.多 线 程 编 程  
 # Directions for use: 
-    The file downloaded by the client exists in the server file directory, the maximum number of threads is not more than 1000, not less than 1
+    1.The file downloaded by the client exists in the server file directory
+    2.the maximum number of threads is not more than 1000, not less than 1
+    3.Download the successful file named "download"
 
 
 
