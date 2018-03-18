@@ -8,11 +8,16 @@
     The client side  :  ./client 127.0.0.1 5201
     
 # The technology used by the server :
-    epoll 多路复用( ET模式, EPOLLONESHOT事件 )
-    非阻塞套接字 
+    1.epoll 多路复用( ET模式, EPOLLONESHOT事件 )
+    2.非 阻 塞 套 接 字 
 # The technology used by the client :
-    条件变量与互斥锁
-    多线程编程 
+    1.条 件 变 量 与 互 斥 锁
+    2.多 线 程 编 程  
+# Directions for use: 
+    The file downloaded by the client exists in the server file directory, the maximum number of threads is not more than 1000, not less than 1
+
+
+
 
 
     

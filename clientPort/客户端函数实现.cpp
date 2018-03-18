@@ -172,11 +172,6 @@ void *my_recv(void* args)  //静态成员具有类的数据成员 conn_fd
             cout << massage.str  << endl ;
             condTag.signal() ;
             pthread_exit(NULL); //激活条件变量之后 ，该线程就退出
-        //break ;
-        // case 1:
-        // //接受文件 ,保存所对应的文件数据
-        //     keep_file(massage); //temp 为 主线 
-        //     break ;
         case  1101  :
             //测试代码 
             cout << "客户端接受到数据 ： flag ==  "<< massage.flag   << endl ;
@@ -184,12 +179,4 @@ void *my_recv(void* args)  //静态成员具有类的数据成员 conn_fd
         }
     }
 }
-// int keep_file(TT client_msg)   //以temp归类
-// {
-//     // print(client_msg);
-    
-//     if( write(filefds[client_msg.temp+1],client_msg.str,client_msg.BiteCount) < 0) 
-//         myerror("write file failed ",__LINE__ );
-//     return 0;
-// }
 
